@@ -80,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IntegrationBlTests.cs" />
-    <Compile Include="IntegrationInfrastructureTests.cs" />
     <Compile Include="IntegrationTestModels.cs" />
     <Compile Include="IntegrationTestsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
