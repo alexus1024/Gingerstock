@@ -7,6 +7,7 @@ using Castle.Windsor.Installer;
 using Gingerstock2.Bl;
 using Gingerstock2.Store;
 using NUnit.Framework;
+using static Gingerstock2.Tests.IntegrationTestsHelper;
 
 namespace Gingerstock2.Tests
 {
@@ -29,51 +30,9 @@ namespace Gingerstock2.Tests
         [SetUp]
         public void SetUp()
         {
-            IntegrationTestsHelper.ClearDbFast(Db);
+            ClearDbFast(Db);
         }
 
-        public struct TestStepData
-        {
-            public TestStepData(bool isSell, int count, Decimal price)
-            {
-                IsSell = isSell;
-                Count = count;
-                Price = price;
-            }
-
-            public bool IsSell;
-            public int Count;
-            public Decimal Price;
-        }
-
-        public struct TestDealResult
-        {
-            public TestDealResult(int count, int quantity, Decimal money)
-            {
-                TrTotalCount = count;
-                TrTotalQuantity = quantity;
-                TrTotalMoney = money;
-            }
-
-            public override string ToString()
-            {
-                return $"TrCnt:{TrTotalCount} Qnt:{TrTotalQuantity} $:{TrTotalMoney}";
-            }
-
-            public int TrTotalCount;
-            public int TrTotalQuantity;
-            public Decimal TrTotalMoney;
-
-        }
-
-        static TestStepData Buy(int count, Decimal price)
-        {
-            return new TestStepData(false, count, price);
-        }
-        static TestStepData Sell(int count, Decimal price)
-        {
-            return new TestStepData(true, count, price);
-        }
 
         public static IEnumerable<TestCaseData> TestDealCases
         {
@@ -142,4 +101,5 @@ namespace Gingerstock2.Tests
         }
         
     }
+
 }

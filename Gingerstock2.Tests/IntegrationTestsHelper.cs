@@ -16,5 +16,14 @@ namespace Gingerstock2.Tests
             }
         }
 
+        public static TestStepData Buy(int count, Decimal price)
+        {
+            return new TestStepData(false, count, price);
+        }
+        public static TestStepData Sell(int count, Decimal price)
+        {
+            return new TestStepData(true, count, price);
+        }
+
     }
 }
