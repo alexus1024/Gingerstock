@@ -16,6 +16,13 @@ namespace Gingerstock2.Bl
             return that.Quantity>0;
         }
 
+        public static int AbsoluteRestQuantity(this Lot that)
+        {
+            return Math.Abs(that.Quantity - that.ClosedQuantity);
+        }
+
+        
+
         public static IQueryable<Lot> WhereNotClosed(this IQueryable<Lot> that)
         {
             return that.Where(x => x.ClosedQuantity != x.Quantity);
@@ -23,8 +30,10 @@ namespace Gingerstock2.Bl
 
         public static IQueryable<Lot> WhereOpposite(this IQueryable<Lot> that, int quantity)
         {
-            var sign = Math.Sign(quantity);
-            return that.Where(x => Math.Sign(quantity)!= sign);
+            if (quantity == 0) throw new ArgumentOutOfRangeException(nameof(quantity));
+
+            var sign = quantity > 0;
+            return that.Where(x => (x.Quantity > 0) != sign);
         }
 
         /// <summary>

@@ -16,19 +16,19 @@ namespace Gingerstock2.Bl
             Db = db;
         }
 
-        public void NewSellLot(Decimal price, Int32 quantity, String email)
+        public int NewSellLot(Decimal price, Int32 quantity, String email)
         {
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(quantity));
-            NewLot(price, quantity, email);
+            return NewLot(price, quantity, email);
         }
 
-        public void NewBuyLot(Decimal price, Int32 quantity, String email)
+        public int NewBuyLot(Decimal price, Int32 quantity, String email)
         {
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(quantity));
 
-            NewLot(price, -quantity, email);
+            return NewLot(price, -quantity, email);
         }
 
         public void DoDeals(Int32 lotId)
@@ -44,7 +44,7 @@ namespace Gingerstock2.Bl
                     throw new BlException($"Лот {lotId} уже закрыт");
                 }
 
-                var countToDealTotal = lot.Quantity - lot.ClosedQuantity;
+                var countToDealTotal = lot.AbsoluteRestQuantity();
 
 
                 // найти подходящие противоположные лоты
@@ -56,12 +56,6 @@ namespace Gingerstock2.Bl
                     .ToList();
                     
 
-                // подготовить сделки
-                var oppositeQuantityAccum = 0;
-                var oppositeLotsByCount = oppositeLots.TakeWhile( // TO TEST
-                    opposite => (oppositeQuantityAccum += opposite.Quantity - opposite.ClosedQuantity) <= countToDealTotal)
-                    .ToList();
-
                 var dealQuantityRest = countToDealTotal;
                 var deals = new List<DealPrepareInternalModel>();
                 foreach (var oppositeLot in oppositeLots)
@@ -69,7 +63,7 @@ namespace Gingerstock2.Bl
                     var sellLot = lot.IsSell()? lot:oppositeLot;
                     var buyLot = lot.IsSell() ? oppositeLot : lot;
 
-                    var countToDeal = Math.Min(oppositeLot.Quantity - oppositeLot.ClosedQuantity, dealQuantityRest);
+                    var countToDeal = Math.Min(oppositeLot.AbsoluteRestQuantity(), dealQuantityRest);
                     var newDeal = new DealPrepareInternalModel()
                     {
                         Count = countToDeal,
@@ -86,7 +80,7 @@ namespace Gingerstock2.Bl
                     
                 }
 
-                Debug.Assert(deals.Sum(x => x.Count) == countToDealTotal);
+                Debug.Assert(deals.Sum(x => x.Count) <= countToDealTotal);
 
                 // зарегистировать сделки
                 // (тут по идее надо пологаться на оптимистичную блокировку и обрабатывать её ошибки, но оставлю это вне рамок данного проекта)    
@@ -96,7 +90,7 @@ namespace Gingerstock2.Bl
                     var newTransaction = new Transaction()
                     {
                         Price = deal.Price,
-                        Count = deal.Count,
+                        Quantity = deal.Count,
                         BuyLot = deal.BuyLot,
                         SellLot = deal.SellLot,
                         BuyBorkerEmail = deal.BuyLot.BrokerEmail,
@@ -108,11 +102,11 @@ namespace Gingerstock2.Bl
                     };
                     db.Transactions.Add(newTransaction);
 
-                    deal.BuyLot.ClosedQuantity = IncreaceClosedQuantityHelper(deal.BuyLot.ClosedQuantity, deal.Count);
-                    deal.SellLot.ClosedQuantity = IncreaceClosedQuantityHelper(deal.SellLot.ClosedQuantity, deal.Count);
+                    IncreaceClosedQuantityHelper(deal.BuyLot, deal.Count);
+                    IncreaceClosedQuantityHelper(deal.SellLot, deal.Count);
 
-                    Debug.Assert(deal.BuyLot.ClosedQuantity <= deal.BuyLot.Quantity);
-                    Debug.Assert(deal.SellLot.ClosedQuantity <= deal.SellLot.Quantity);
+                    Debug.Assert(Math.Abs(deal.BuyLot.ClosedQuantity) <= Math.Abs(deal.BuyLot.Quantity));
+                    Debug.Assert(Math.Abs(deal.SellLot.ClosedQuantity) <= Math.Abs(deal.SellLot.Quantity));
                 }
 
                 db.SaveChanges();
@@ -121,11 +115,14 @@ namespace Gingerstock2.Bl
         }
 
         /// <summary>
-        /// Добавляет ClosedQuantity по модулю (без учёта знака)
+        /// Добавляет count к ClosedQuantity по модулю (без учёта знака)
         /// </summary>
-        private int IncreaceClosedQuantityHelper(int quantity, int count)
+        private void IncreaceClosedQuantityHelper(Lot lot, int count)
         {
-            return Math.Sign(quantity) * (Math.Abs(quantity) + count);
+            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
+            if (lot.Quantity == 0) throw new ArgumentException("lot with zero Quantity", nameof(lot));
+
+            lot.ClosedQuantity = Math.Sign(lot.Quantity) * (Math.Abs(lot.ClosedQuantity) + count);
         }
 
         class DealPrepareInternalModel
@@ -136,7 +133,7 @@ namespace Gingerstock2.Bl
             public decimal Price { get; set; }
         }
 
-        void NewLot(Decimal price, Int32 quantity, String email)
+        int NewLot(Decimal price, Int32 quantity, String email)
         {
             if (price <= 0) throw new ArgumentOutOfRangeException(nameof(price));
 
@@ -148,6 +145,7 @@ namespace Gingerstock2.Bl
                     Price = price,
                     BrokerEmail = email,
                     Quantity = quantity,
+                    StartTime = DateTime.Now,
                 };
                 db.Lots.Add(lot);
                 db.SaveChanges();
@@ -155,6 +153,7 @@ namespace Gingerstock2.Bl
             }
 
             DoDeals(lotId);
+            return lotId;
         }
     }
 }

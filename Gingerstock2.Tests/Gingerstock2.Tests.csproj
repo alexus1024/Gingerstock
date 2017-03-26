@@ -79,7 +79,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fixture1.cs" />
+    <Compile Include="IntegrationBlTests.cs" />
+    <Compile Include="IntegrationInfrastructureTests.cs" />
+    <Compile Include="IntegrationTestsHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

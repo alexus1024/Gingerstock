@@ -34,7 +34,7 @@ namespace Gingerstock2.Store.Models
         public DateTime SellLotTime  { get; set; }
         public DateTime BuyLotTime { get; set; }
         public Decimal Price { get; set; }
-        public Int32 Count { get; set; }
+        public Int32 Quantity { get; set; }
         public String SellBorkerEmail { get; set; }
         public String BuyBorkerEmail { get; set; }
 

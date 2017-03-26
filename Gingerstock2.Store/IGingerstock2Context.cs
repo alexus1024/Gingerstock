@@ -6,9 +6,11 @@ namespace Gingerstock2.Store
 {
     public interface IGingerstock2Context : IDisposable
     {
-        IDbSet<Lot> Lots { get; set; }
-        IDbSet<Transaction> Transactions { get; set; }
+        IDbSet<Lot> Lots { get; }
+        IDbSet<Transaction> Transactions { get; }
         TEntity GetById<TEntity>(Int32 id) where TEntity : Gingerstock2Entity;
         int SaveChanges();
+
+        Database Database { get; }
     }
 }

@@ -29,7 +29,7 @@ namespace Gingerstock2.Store
                         SellLotTime = c.DateTime(nullable: false),
                         BuyLotTime = c.DateTime(nullable: false),
                         Price = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Count = c.Int(nullable: false),
+                        Quantity = c.Int(nullable: false),
                         SellBorkerEmail = c.String(maxLength: 2147483647),
                         BuyBorkerEmail = c.String(maxLength: 2147483647),
                         SellLotId = c.Int(),
