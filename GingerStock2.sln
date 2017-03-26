@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gingerstock2.Store", "Gingerstock2.Store\Gingerstock2.Store.csproj", "{AA9700D3-7664-4A22-9ED1-60CE7D93A2FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gingerstock2.Bl", "Gingerstock2.Bl\Gingerstock2.Bl.csproj", "{8FDE050C-DFD1-4684-88B6-32F6D4942BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gingerstock2.Tests", "Gingerstock2.Tests\Gingerstock2.Tests.csproj", "{99A49BEA-B4E4-4207-B1F7-83EDCDC10CD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AA9700D3-7664-4A22-9ED1-60CE7D93A2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA9700D3-7664-4A22-9ED1-60CE7D93A2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA9700D3-7664-4A22-9ED1-60CE7D93A2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA9700D3-7664-4A22-9ED1-60CE7D93A2FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FDE050C-DFD1-4684-88B6-32F6D4942BC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FDE050C-DFD1-4684-88B6-32F6D4942BC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FDE050C-DFD1-4684-88B6-32F6D4942BC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FDE050C-DFD1-4684-88B6-32F6D4942BC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A49BEA-B4E4-4207-B1F7-83EDCDC10CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A49BEA-B4E4-4207-B1F7-83EDCDC10CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A49BEA-B4E4-4207-B1F7-83EDCDC10CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A49BEA-B4E4-4207-B1F7-83EDCDC10CD7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
