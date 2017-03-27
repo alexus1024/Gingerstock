@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Gingerstock2.Store;
 using Gingerstock2.Store.Models;
+using Gingerstock2.Store.Services;
 
 namespace Gingerstock2.Bl.Services
 {
     public class LotService: BlServiceBase
     {
-        public LotService(IDbService db):base(db)
+        public LotService(IGingerstockDbService db):base(db)
         {
         }
 

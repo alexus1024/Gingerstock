@@ -1,11 +1,12 @@
 ﻿using System;
 using Gingerstock2.Store;
+using Gingerstock2.Store.Services;
 
 namespace Gingerstock2.Tests
 {
     static class IntegrationTestsHelper
     {
-        public static void ClearDbFast(IDbService dbSrv)
+        public static void ClearDbFast(IGingerstockDbService dbSrv)
         {
             using (var db = dbSrv.GetDb())
             {

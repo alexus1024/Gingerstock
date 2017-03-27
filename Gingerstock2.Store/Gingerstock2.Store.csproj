@@ -75,17 +75,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gingerstock2Context.configure.cs" />
     <Compile Include="IGingerstock2Context.cs" />
     <Compile Include="Installers\StoreInstaller.cs" />
-    <Compile Include="Gingerstock2Context.cs" />
+    <Compile Include="Gingerstock2Context.entities.cs" />
     <Compile Include="Migrations\201703261146304_Init.cs" />
     <Compile Include="Migrations\201703261146304_Init.Designer.cs">
       <DependentUpon>201703261146304_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Gingerstock2EntityBase.cs" />
     <Compile Include="Models\Lot.cs" />
+    <Compile Include="Models\Transaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlLiteDbService.cs" />
+    <Compile Include="Services\SqlLiteGingerstockDbService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

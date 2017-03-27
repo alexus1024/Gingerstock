@@ -1,12 +1,12 @@
-﻿namespace Gingerstock2.Store
+﻿namespace Gingerstock2.Store.Services
 {
-    public interface IDbService
+    public interface IGingerstockDbService
     {
         IGingerstock2Context GetDb();
     }
 
 
-    class SqlLiteDbService : IDbService
+    class SqlLiteGingerstockDbService : IGingerstockDbService
     {
         public IGingerstock2Context GetDb()
         {

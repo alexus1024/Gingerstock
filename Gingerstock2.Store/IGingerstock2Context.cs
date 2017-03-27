@@ -8,7 +8,7 @@ namespace Gingerstock2.Store
     {
         IDbSet<Lot> Lots { get; }
         IDbSet<Transaction> Transactions { get; }
-        TEntity GetById<TEntity>(Int32 id) where TEntity : Gingerstock2Entity;
+        TEntity GetById<TEntity>(Int32 id) where TEntity : Gingerstock2EntityBase;
         int SaveChanges();
 
         Database Database { get; }

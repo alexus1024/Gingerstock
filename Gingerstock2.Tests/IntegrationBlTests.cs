@@ -7,6 +7,7 @@ using Castle.Windsor.Installer;
 using Gingerstock2.Bl;
 using Gingerstock2.Bl.Services;
 using Gingerstock2.Store;
+using Gingerstock2.Store.Services;
 using NUnit.Framework;
 using static Gingerstock2.Tests.IntegrationTestsHelper;
 
@@ -16,7 +17,7 @@ namespace Gingerstock2.Tests
     public class IntegrationBlTests
     {
         public IWindsorContainer Container { get; set; }
-        public IDbService Db { get; set; }
+        public IGingerstockDbService Db { get; set; }
 
         [OneTimeSetUp]
         public  void SetUpFixture()
@@ -24,7 +25,7 @@ namespace Gingerstock2.Tests
             WindsorContainer c = new WindsorContainer();
             c.Install(FromAssembly.InThisApplication());
             Container = c;
-            Db = c.Resolve<IDbService>();
+            Db = c.Resolve<IGingerstockDbService>();
         }
 
 

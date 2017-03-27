@@ -2,36 +2,36 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Gingerstock2.Store;
 using Gingerstock2.Store.Models;
+using Gingerstock2.Store.Services;
 
 namespace Gingerstock2.Bl.Services
 {
     /// <summary>
-    /// Сервис, обеспечивающий логику работы биржы - регистрацию лотов, поиск и исполнение сделок.
+    ///     Сервис, обеспечивающий логику работы биржы - регистрацию лотов, поиск и исполнение сделок.
     /// </summary>
-    public class StockExchangeService:BlServiceBase
+    public class StockExchangeService : BlServiceBase
     {
-        public StockExchangeService(IDbService db):base(db)
+        public StockExchangeService(IGingerstockDbService db) : base(db)
         {
         }
 
-        public int NewSellLot(Decimal price, Int32 quantity, String email)
-        {
-            if (quantity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(quantity));
-            return NewLot(price, quantity, email);
-        }
-
-        public int NewBuyLot(Decimal price, Int32 quantity, String email)
+        public int NewSellLot(decimal price, int quantity, string email)
         {
             if (quantity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(quantity));
-
-            return NewLot(price, -quantity, email);
+            return NewLotHelper(price, quantity, email);
         }
 
-        public void DoDeals(Int32 lotId)
+        public int NewBuyLot(decimal price, int quantity, string email)
+        {
+            if (quantity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(quantity));
+
+            return NewLotHelper(price, -quantity, email);
+        }
+
+        public void DoDeals(int lotId)
         {
             var time = DateTime.Now;
 
@@ -54,30 +54,29 @@ namespace Gingerstock2.Bl.Services
                     .WherePriceFits(lot.Price, lot.Quantity)
                     .OrderByProfitability(lot.Quantity)
                     .ToList();
-                    
 
+                // подготовить и расчитать сделки
                 var dealQuantityRest = countToDealTotal;
                 var deals = new List<DealPrepareInternalModel>();
                 foreach (var oppositeLot in oppositeLots)
                 {
-                    var sellLot = lot.IsSell()? lot:oppositeLot;
+                    var sellLot = lot.IsSell() ? lot : oppositeLot;
                     var buyLot = lot.IsSell() ? oppositeLot : lot;
 
                     var countToDeal = Math.Min(oppositeLot.AbsoluteRestQuantity(), dealQuantityRest);
-                    var newDeal = new DealPrepareInternalModel()
+                    var newDeal = new DealPrepareInternalModel
                     {
                         Count = countToDeal,
                         BuyLot = buyLot,
                         SellLot = sellLot,
-                        Price = oppositeLot.Price,
+                        Price = oppositeLot.Price
                     };
                     deals.Add(newDeal);
 
                     dealQuantityRest -= countToDeal;
                     Debug.Assert(dealQuantityRest >= 0);
-                    if (dealQuantityRest == 0) 
+                    if (dealQuantityRest == 0)
                         break;
-                    
                 }
 
                 Debug.Assert(deals.Sum(x => x.Count) <= countToDealTotal);
@@ -87,7 +86,7 @@ namespace Gingerstock2.Bl.Services
 
                 foreach (var deal in deals)
                 {
-                    var newTransaction = new Transaction()
+                    var newTransaction = new Transaction
                     {
                         Price = deal.Price,
                         Quantity = deal.Count,
@@ -97,8 +96,7 @@ namespace Gingerstock2.Bl.Services
                         SellBorkerEmail = deal.SellLot.BrokerEmail,
                         BuyLotTime = deal.BuyLot.StartTime,
                         SellLotTime = deal.SellLot.StartTime,
-                        Time = time,
-
+                        Time = time
                     };
                     db.Transactions.Add(newTransaction);
 
@@ -110,42 +108,33 @@ namespace Gingerstock2.Bl.Services
                 }
 
                 db.SaveChanges();
-
             }
         }
 
         /// <summary>
-        /// Добавляет count к ClosedQuantity по модулю (без учёта знака)
+        ///     Добавляет count к ClosedQuantity по модулю (без учёта знака)
         /// </summary>
         private void IncreaceClosedQuantityHelper(Lot lot, int count)
         {
             if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
             if (lot.Quantity == 0) throw new ArgumentException("lot with zero Quantity", nameof(lot));
 
-            lot.ClosedQuantity = Math.Sign(lot.Quantity) * (Math.Abs(lot.ClosedQuantity) + count);
+            lot.ClosedQuantity = Math.Sign(lot.Quantity)*(Math.Abs(lot.ClosedQuantity) + count);
         }
 
-        class DealPrepareInternalModel
-        {
-            public int Count { get; set; }
-            public Lot BuyLot { get; set; }
-            public Lot SellLot { get; set; }
-            public decimal Price { get; set; }
-        }
-
-        int NewLot(Decimal price, Int32 quantity, String email)
+        private int NewLotHelper(decimal price, int quantity, string email)
         {
             if (price <= 0) throw new ArgumentOutOfRangeException(nameof(price));
 
-            Int32 lotId;
+            int lotId;
             using (var db = Db.GetDb())
             {
-                var lot = new Lot()
+                var lot = new Lot
                 {
                     Price = price,
                     BrokerEmail = email,
                     Quantity = quantity,
-                    StartTime = DateTime.Now,
+                    StartTime = DateTime.Now
                 };
                 db.Lots.Add(lot);
                 db.SaveChanges();
@@ -154,6 +143,14 @@ namespace Gingerstock2.Bl.Services
 
             DoDeals(lotId);
             return lotId;
+        }
+
+        private class DealPrepareInternalModel
+        {
+            public int Count { get; set; }
+            public Lot BuyLot { get; set; }
+            public Lot SellLot { get; set; }
+            public decimal Price { get; set; }
         }
     }
 }

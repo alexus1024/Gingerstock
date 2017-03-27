@@ -1,12 +1,13 @@
 ﻿using Gingerstock2.Store;
+using Gingerstock2.Store.Services;
 
 namespace Gingerstock2.Bl.Services
 {
     public abstract class BlServiceBase
     {
-        protected IDbService Db { get; private set; }
+        protected IGingerstockDbService Db { get; private set; }
 
-        protected BlServiceBase(IDbService db)
+        protected BlServiceBase(IGingerstockDbService db)
         {
             Db = db;
         }
