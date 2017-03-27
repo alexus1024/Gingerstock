@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Installers\AssemblyBootstrap.cs" />
+    <Compile Include="Installers\BlServicesInstaller.cs" />
     <Compile Include="Exceptions\BlException.cs" />
     <Compile Include="ModelBlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
