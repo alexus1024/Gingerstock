@@ -11,11 +11,11 @@ namespace Gingerstock2.Bl.Services
         {
         }
 
-        public List<Transaction> GetAllTransactions()
+        public List<Transaction> GetLastTransactions()
         {
             using (var db = Db.GetDb())
             {
-                return db.Transactions.ToList();
+                return db.Transactions.OrderByDescending(x => x.Time).Take(100).ToList();
             }
         }
     }

@@ -9,21 +9,23 @@ using Gingerstock2.Store.Models;
 
 namespace Gingerstock.Web.Controllers
 {
-    public class LotController : ApiController
+    public abstract class LotController : ApiController
     {
+        private readonly bool _isSell;
         private readonly LotService _lotService;
         private readonly StockExchangeService _exchangeService;
 
-        public LotController(LotService lotService, StockExchangeService exchangeService)
+        protected LotController(Boolean isSell, LotService lotService, StockExchangeService exchangeService)
         {
+            _isSell = isSell;
             _lotService = lotService;
             _exchangeService = exchangeService;
         }
 
 
-        public IEnumerable<Lot> Get(bool isSell)
+        public IEnumerable<Lot> Get()
         {
-            return _lotService.GetAllLots(isSell);
+            return  _lotService.GetOpenedLots(_isSell);
         }
 
 
@@ -35,9 +37,26 @@ namespace Gingerstock.Web.Controllers
 
         public void Post([FromBody]Lot value)
         {
-            
+            if (_isSell)
+                _exchangeService.NewSellLot(value.Price, value.Quantity, value.BrokerEmail);
+            else
+                _exchangeService.NewBuyLot(value.Price, value.Quantity, value.BrokerEmail);
         }
 
 
+    }
+
+    public class BuyLotController : LotController
+    {
+        public BuyLotController(LotService lotService, StockExchangeService exchangeService) : base(false, lotService, exchangeService)
+        {
+        }
+    }
+
+    public class SellLotController : LotController
+    {
+        public SellLotController(LotService lotService, StockExchangeService exchangeService) : base(true, lotService, exchangeService)
+        {
+        }
     }
 }

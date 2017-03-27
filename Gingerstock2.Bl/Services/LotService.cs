@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Gingerstock2.Store;
 using Gingerstock2.Store.Models;
@@ -11,22 +12,33 @@ namespace Gingerstock2.Bl.Services
         {
         }
 
-        public List<Lot> GetAllLots(bool? isSell)
+        public List<Lot> GetOpenedLots(bool? isSell)
         {
             using (var db = Db.GetDb())
             {
                 IEnumerable<Lot> query = db.Lots;
                 if (isSell != null && isSell == true)
                 {
-                    query = query.Where(x => x.Quantity > 0);
+                    query = query.Where(x => x.Quantity > 0)
+                        .Where(x => x.ClosedQuantity < x.Quantity);
                 }
 
                 if (isSell != null && isSell == false)
                 {
-                    query = query.Where(x => x.Quantity < 0);
+                    query = query.Where(x => x.Quantity < 0)
+                        .Where(x => x.ClosedQuantity > x.Quantity);
                 }
 
-                return query.ToList();
+                query = query.OrderByDescending(x => x.StartTime);
+
+                // скроем от следущих уровней тонкость про отрицательные величины, им это не к чему
+                var ret = query.ToList();
+                ret.ForEach(x =>
+                {
+                    x.Quantity = Math.Abs(x.Quantity);
+                    x.ClosedQuantity = Math.Abs(x.ClosedQuantity);
+                });
+                return ret;
             }
         }
 

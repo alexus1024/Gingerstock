@@ -8,11 +8,11 @@ namespace Gingerstock.Web.Plumbing
 {
     public class WindsorCompositionRoot : IHttpControllerActivator
     {
-        private readonly IWindsorContainer container;
+        private readonly IWindsorContainer _container;
 
         public WindsorCompositionRoot(IWindsorContainer container)
         {
-            this.container = container;
+            this._container = container;
         }
 
         public IHttpController Create(
@@ -21,27 +21,27 @@ namespace Gingerstock.Web.Plumbing
             Type controllerType)
         {
             var controller =
-                (IHttpController)this.container.Resolve(controllerType);
+                (IHttpController)this._container.Resolve(controllerType);
 
             request.RegisterForDispose(
                 new Release(
-                    () => this.container.Release(controller)));
+                    () => this._container.Release(controller)));
 
             return controller;
         }
 
         private class Release : IDisposable
         {
-            private readonly Action release;
+            private readonly Action _release;
 
             public Release(Action release)
             {
-                this.release = release;
+                this._release = release;
             }
 
             public void Dispose()
             {
-                this.release();
+                this._release();
             }
         }
     }
