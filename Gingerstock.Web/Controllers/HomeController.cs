@@ -9,17 +9,15 @@ namespace Gingerstock.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IDbService _srv;
 
-        public HomeController(IDbService srv)
+
+        public HomeController()
         {
-            _srv = srv;
+
         }
 
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
-
             return View();
         }
     }

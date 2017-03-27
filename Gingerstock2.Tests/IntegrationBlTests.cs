@@ -5,6 +5,7 @@ using System.Linq;
 using Castle.Windsor;
 using Castle.Windsor.Installer;
 using Gingerstock2.Bl;
+using Gingerstock2.Bl.Services;
 using Gingerstock2.Store;
 using NUnit.Framework;
 using static Gingerstock2.Tests.IntegrationTestsHelper;
@@ -71,7 +72,7 @@ namespace Gingerstock2.Tests
         [Test, TestCaseSource(nameof(TestDealCases))]
         public TestDealResult TestDeal(TestStepData[] steps)
         {
-            var exchange = Container.Resolve<StockExchange>();
+            var exchange = Container.Resolve<StockExchangeService>();
 
             foreach (var step in steps)
             {

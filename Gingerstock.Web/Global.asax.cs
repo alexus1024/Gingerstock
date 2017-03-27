@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -35,6 +36,10 @@ namespace Gingerstock.Web
                 .Install(FromAssembly.InThisApplication());
             var controllerFactory = new WindsorControllerFactory(_container.Kernel);
             ControllerBuilder.Current.SetControllerFactory(controllerFactory);
+            GlobalConfiguration.Configuration.Services.Replace(
+                typeof (IHttpControllerActivator),
+                new WindsorCompositionRoot(_container));
+
         }
 
         protected void Application_End()

@@ -5,15 +5,15 @@ using System.Linq;
 using Gingerstock2.Store;
 using Gingerstock2.Store.Models;
 
-namespace Gingerstock2.Bl
+namespace Gingerstock2.Bl.Services
 {
-    public class StockExchange
+    /// <summary>
+    /// Сервис, обеспечивающий логику работы биржы - регистрацию лотов, поиск и исполнение сделок.
+    /// </summary>
+    public class StockExchangeService:BlServiceBase
     {
-        protected IDbService Db { get; private set; }
-
-        public StockExchange(IDbService db)
+        public StockExchangeService(IDbService db):base(db)
         {
-            Db = db;
         }
 
         public int NewSellLot(Decimal price, Int32 quantity, String email)

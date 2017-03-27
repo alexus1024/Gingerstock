@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Web.Http.Controllers;
+using System.Web.Mvc;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
@@ -11,6 +12,9 @@ namespace Gingerstock.Web.Installers
         {
             container.Register(Classes.FromThisAssembly()
                 .BasedOn<IController>()
+                .LifestyleTransient());
+            container.Register(Classes.FromThisAssembly()
+                .BasedOn<IHttpController>()
                 .LifestyleTransient());
         }
     }
